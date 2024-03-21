@@ -91,10 +91,25 @@ export default function AgeCalculator() {
 
   const calculateAge = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const target = e.target as HTMLFormElement;
     const _day = target.Day.value;
     const _month = target.Month.value;
     const _year = target.Year.value;
+    if (!_day || !_month || !_year) {
+      let _error = { ...error };
+      if (!_day) {
+        _error.Day = 'Day is required';
+      }
+      if (!_month) {
+        _error.Month = 'Month is required';
+      }
+      if (!_year) {
+        _error.Year = 'Year is required';
+      }
+      setError(_error);
+      return;
+    }
     const ageDifMs =
       Date.now() - new Date(`${_year}-${_month}-${_day}`).getTime();
     const ageDate = new Date(ageDifMs);
