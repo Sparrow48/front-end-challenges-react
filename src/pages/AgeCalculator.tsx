@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AgeCalculator() {
   const [age, setAge] = useState<{ year: number; month: number; day: number }>({
@@ -6,21 +6,102 @@ export default function AgeCalculator() {
     month: -1,
     day: -1,
   });
+  const [error, setError] = useState<{
+    Day: string;
+    Month: string;
+    Year: string;
+  }>({
+    Day: '',
+    Month: '',
+    Year: '',
+  });
+
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
+
+  useEffect(() => {
+    let errors: any = {};
+    if (selectedYear) {
+      if (selectedYear && parseInt(selectedYear) >= new Date().getFullYear()) {
+        errors.Year = 'Must be in the past';
+      } else if (selectedYear && selectedYear.length !== 4) {
+        errors.Year = 'Must be 4 digits';
+      }
+    }
+    if (selectedMonth) {
+      if (parseInt(selectedMonth) > 12) {
+        errors.Month = 'Must be a valid month';
+      }
+    }
+    if (selectedDay) {
+      let daysInMonth;
+      if (selectedMonth && selectedYear) {
+        daysInMonth = new Date(
+          parseInt(selectedYear),
+          parseInt(selectedMonth),
+          0
+        ).getDate();
+      } else if (selectedMonth) {
+        daysInMonth = new Date(
+          new Date().getFullYear(),
+          parseInt(selectedMonth),
+          0
+        ).getDate();
+      } else if (selectedYear) {
+        daysInMonth = new Date(
+          parseInt(selectedYear),
+          new Date().getMonth() + 1,
+          0
+        ).getDate();
+      } else {
+        daysInMonth = new Date(
+          new Date().getFullYear(),
+          new Date().getMonth() + 1,
+          0
+        ).getDate();
+      }
+
+      if (parseInt(selectedDay) > daysInMonth) {
+        errors.Day = 'Must be a valid day';
+      }
+    }
+    setError(errors);
+  }, [selectedDay, selectedMonth, selectedYear]);
+
+  const handleInput = (value: string, name: string) => {
+    if (value.length === 0) {
+      setError({ ...error, [name]: '' });
+      return;
+    }
+
+    if (Number.isNaN(parseInt(value))) {
+      setError({ ...error, [name]: 'Must be a number' });
+      return;
+    }
+
+    if (name === 'Year') {
+      setSelectedYear(value);
+    } else if (name === 'Month') {
+      setSelectedMonth(value);
+    } else if (name === 'Day') {
+      setSelectedDay(value);
+    }
+  };
 
   const calculateAge = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
-    let _day = target.Day.value;
-    let _month = target.Month.value;
-    let _year = target.Year.value;
-    let ageDifMs =
+    const _day = target.Day.value;
+    const _month = target.Month.value;
+    const _year = target.Year.value;
+    const ageDifMs =
       Date.now() - new Date(`${_year}-${_month}-${_day}`).getTime();
-    var ageDate = new Date(ageDifMs); // miliseconds from epoch
-    console.log('🚀 ~ calculateAge ~ ageDifMs:', ageDifMs);
-    console.log('🚀 ~ calculateAge ~ ageDate:', ageDate);
-    let year = Math.abs(ageDate.getUTCFullYear() - 1970);
-    let month = Math.abs(ageDate.getUTCMonth());
-    let day = Math.abs(ageDate.getUTCDate() - 1);
+    const ageDate = new Date(ageDifMs);
+
+    const year = Math.abs(ageDate.getUTCFullYear() - 1970);
+    const month = Math.abs(ageDate.getUTCMonth());
+    const day = Math.abs(ageDate.getUTCDate() - 1);
     setAge({ year, month, day });
   };
 
@@ -44,7 +125,13 @@ export default function AgeCalculator() {
                   min={0}
                   name="Day"
                   placeholder="DD"
+                  onChange={(e) => {
+                    handleInput(e.target.value, 'Day');
+                  }}
                 />
+                {error.Day?.length > 0 && (
+                  <p className="pt-1 text-sm text-red-500 ">{error.Day}</p>
+                )}
               </div>
               <div className="flex flex-col items-start justify-center">
                 <label className="w-20 pb-2 font-semibold text-left md:w-32">
@@ -55,7 +142,13 @@ export default function AgeCalculator() {
                   min={0}
                   name="Month"
                   placeholder="MM"
+                  onChange={(e) => {
+                    handleInput(e.target.value, 'Month');
+                  }}
                 />
+                {error.Month?.length > 0 && (
+                  <p className="pt-1 text-sm text-red-500 ">{error.Month}</p>
+                )}
               </div>
               <div className="flex flex-col items-start justify-center">
                 <label className="w-20 pb-2 font-semibold text-left md:w-32">
@@ -66,7 +159,13 @@ export default function AgeCalculator() {
                   min={0}
                   name="Year"
                   placeholder="YYYY"
+                  onChange={(e) => {
+                    handleInput(e.target.value, 'Year');
+                  }}
                 />
+                {error.Year?.length > 0 && (
+                  <p className="pt-1 text-sm text-red-500 ">{error.Year}</p>
+                )}
               </div>
             </div>
 
