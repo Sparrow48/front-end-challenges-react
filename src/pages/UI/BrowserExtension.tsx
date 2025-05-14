@@ -1,9 +1,39 @@
+import ExtensionCard from '@/components/UI/BrowserExtension/ExtansionCard';
+import { Link } from 'react-router-dom';
+import themeLogo from '../../assets/UI/BrowserExtension/icon-sun.svg';
+import devLensLogo from '../../assets/UI/BrowserExtension/logo-devlens.svg';
+import logo from '../../assets/UI/BrowserExtension/logo.svg';
+
 const BrowserExtension = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="mb-4 text-4xl font-bold">Browser Extension</h1>
-      <p className="mb-8 text-lg">Coming soon...</p>
-      <img src="/images/coming-soon.png" alt="Coming Soon" className="w-1/2" />
+    <div className="flex flex-col gap-6 p-5 bg-sky-950">
+      <div className="flex justify-between p-2 rounded-lg bg-slate-700">
+        <Link to="/" rel="noopener noreferrer">
+          <img src={logo} alt="Logo" className="h-11" />
+        </Link>
+        <button className="p-2 rounded-md bg-slate-600">
+          <img src={themeLogo} alt="Logo" className="size-6" />
+        </button>
+      </div>
+      <h1 className="mt-2 text-4xl font-bold text-center text-slate-200">
+        Extensions List
+      </h1>
+      <div className="flex items-center justify-center gap-3">
+        <button className="px-5 py-2 text-2xl font-light text-white rounded-full bg-slate-700 ">
+          All
+        </button>
+        <button className="px-5 py-2 text-2xl font-light text-white rounded-full bg-slate-700 ">
+          Active
+        </button>
+        <button className="px-5 py-2 text-2xl font-light text-white rounded-full bg-slate-700 ">
+          Inactive
+        </button>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-4 mt-2">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
+          <ExtensionCard key={item} logo={devLensLogo} />
+        ))}
+      </div>
     </div>
   );
 };
