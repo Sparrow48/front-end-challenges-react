@@ -1,6 +1,6 @@
 const ExtensionCard = ({ logo }: { logo: string }) => {
   return (
-    <div className="flex flex-col gap-5 p-6 rounded-3xl bg-slate-700">
+    <div className="flex flex-col gap-5 p-6 rounded-3xl bg-[#2f364b]">
       <div className="flex">
         <img src={logo} alt="Logo" className="size-16" />
         <div className="flex flex-col px-4">
